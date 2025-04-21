@@ -1,0 +1,82 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generate QR Code</title>
+    <link rel="stylesheet" href="{% static 'qrcode_generator/main.css' %}">
+</head>
+
+<body>
+    <div class="header">QR-cryfish</div>
+    <div class="container">
+        <form method="post">
+            {% csrf_token %}
+            <input type="text" name="data" class="input-field" placeholder="Вставьте ссылку" required>
+            <button type="submit" class="button">Generate</button>
+        </form>
+    </div>
+
+    <!-- Модальное окно -->
+    {% if qr_code_url %}
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Your QR Code</h2>
+            <div class="qr-code">
+                <img id="qrImage" src="{{ qr_code_url }}" alt="QR Code">
+            </div>
+            <div class="style-picker">
+                <label for="style">Choose QR Code Style:</label>
+                <form method="post">
+                    {% csrf_token %}
+                    <select id="style" name="style">
+                        <option value="default">Default (Black on White)</option>
+                        <option value="blue">Blue on White</option>
+                        <option value="red">Red on Yellow</option>
+                        <option value="green">Green on Black</option>
+                    </select>
+                    <button type="submit" class="button">Update Style</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Кнопка "Донские раки" -->
+    <div class="footer">
+        <a href="{% static 'qrcode_generator/fotka.jpg' %}" target="_blank" class="footer-button">Донские раки</a>
+    </div>
+
+    <script>
+        // Открытие модального окна
+        document.querySelector('.button').addEventListener('click', function (event) {
+            event.preventDefault(); // Предотвращаем отправку формы
+            const modal = document.getElementById('qrModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        });
+
+        // Закрытие модального окна
+        function closeModal() {
+            const modal = document.getElementById('qrModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+        }
+
+        // Закрытие модального окна при клике вне его
+        window.addEventListener('click', function (event) {
+            const modal = document.getElementById('qrModal');
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+
+</html>
